@@ -4,6 +4,11 @@
  */
 package com.mycompany.gestorproyectos;
 
+import ConexionSQL.ClassConexionSQLServer;
+import ConexionSQL.ReportsClass;
+import java.util.List;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author ESTUDIANTE
@@ -15,6 +20,25 @@ public class Reports extends javax.swing.JFrame {
      */
     public Reports() {
         initComponents();
+        cargarDatos();
+    }
+    
+    private void cargarDatos() {
+        ClassConexionSQLServer conexion = new ClassConexionSQLServer();
+        List<ReportsClass> List = conexion.obtenerInformes();
+
+        DefaultTableModel model = (DefaultTableModel) tableReports.getModel();
+        model.setRowCount(0); 
+
+        for (ReportsClass p : List) {
+            Object[] rowData = {
+                p.getIDInforme(),
+                p.getAutor(),
+                p.getDescripcion(),
+                p.getFechaCreacion()
+            };
+            model.addRow(rowData);
+        }
     }
 
     /**

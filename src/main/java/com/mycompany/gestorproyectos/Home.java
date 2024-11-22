@@ -4,10 +4,15 @@
  */
 package com.mycompany.gestorproyectos;
 
+import ConexionSQL.ClassConexionSQLServer;
+import ConexionSQL.Proyects;
 import StyleTable.TableActionCellEditor;
 import StyleTable.TableActionCellRender;
 import StyleTable.TableActionEvent;
 import java.sql.DatabaseMetaData;
+import java.util.List;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
@@ -15,32 +20,30 @@ import java.sql.DatabaseMetaData;
  */
 public class Home extends javax.swing.JFrame {
 
-
     RecoverPassword recoverPass = new RecoverPassword();
-    ViewProyects view = new ViewProyects (); 
- 
+    ViewProyects view = new ViewProyects();
+
     /**
      * Creates new form Home
      */
     public Home() {
-        
+
         initComponents();
-        // Usar el placeHolder
-        recoverPass.StylePlaceHolder(txtSearch);
         
+        recoverPass.StylePlaceHolder(txtSearch);
+
         TableActionEvent event = new TableActionEvent() {
             @Override
             public void onView(int row) {
                 System.out.println("View Row: " + row);
-                
-               
-        
-                 view.setVisible(true);
-                    dispose();
+                view.setVisible(true);
+                dispose();
             }
         };
-        table.getColumnModel().getColumn(8).setCellRenderer( new TableActionCellRender ());
-        table.getColumnModel().getColumn(8).setCellEditor(new TableActionCellEditor (event)); 
+        table.getColumnModel().getColumn(8).setCellRenderer(new TableActionCellRender());
+        table.getColumnModel().getColumn(8).setCellEditor(new TableActionCellEditor(event));
+
+        cargarDatos();
     }
 
     /**
@@ -139,7 +142,7 @@ public class Home extends javax.swing.JFrame {
         btnEliminateProyect.setFont(new java.awt.Font("Source Serif Pro", 0, 18)); // NOI18N
         btnEliminateProyect.setForeground(new java.awt.Color(255, 255, 255));
         btnEliminateProyect.setIcon(new javax.swing.ImageIcon(getClass().getResource("/tabler--trash.png"))); // NOI18N
-        btnEliminateProyect.setText("Agregar");
+        btnEliminateProyect.setText("Eliminar");
 
         btnAddProyect1.setBackground(new java.awt.Color(0, 153, 153));
         btnAddProyect1.setFont(new java.awt.Font("Source Serif Pro", 0, 18)); // NOI18N
@@ -240,39 +243,90 @@ public class Home extends javax.swing.JFrame {
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
+    public void cargarDatos() {
+        ClassConexionSQLServer conexion = new ClassConexionSQLServer();
+        List<Proyects> proyectosList = conexion.obtenerProyectos();
+
+        DefaultTableModel model = (DefaultTableModel) table.getModel();
+        model.setRowCount(0); 
+
+        for (Proyects p : proyectosList) {
+            Object[] rowData = {
+                p.getIdProyecto(),
+                p.getNombre(),
+                p.getFechaInicio(),
+                p.getFechaFin(),
+                p.getEstado(),
+                p.getPresupuesto(),
+                p.getDescripcion(),
+                p.getDepartamentoEncargado(),
+                "Más Información"
+            };
+            model.addRow(rowData);
+        }
+    }
+
+
     private void txtSearchFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtSearchFocusGained
         if (txtSearch.getText().equals("Buscar...")) {
-            txtSearch.setText(null); 
+            txtSearch.setText(null);
             txtSearch.requestFocus();
-            
+
             recoverPass.DeleteStylePlaceHolder(txtSearch);
         }
     }//GEN-LAST:event_txtSearchFocusGained
 
     private void txtSearchFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtSearchFocusLost
-       if (txtSearch.getText().length() == 0) {
+        if (txtSearch.getText().length() == 0) {
             recoverPass.StylePlaceHolder(txtSearch);
             txtSearch.setText("Buscar...");
         }
     }//GEN-LAST:event_txtSearchFocusLost
 
     private void formWindowGainedFocus(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowGainedFocus
-       this.requestFocusInWindow(); 
+        this.requestFocusInWindow();
     }//GEN-LAST:event_formWindowGainedFocus
 
     private void btnAddProyect1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddProyect1ActionPerformed
-        InformationProyect information = new InformationProyect(); 
-        information.setVisible(true);
-        dispose();
+        ClassConexionSQLServer conexion = new ClassConexionSQLServer();
+    
+    
+    boolean exito = conexion.insertarProyecto(); 
+
+    if (exito) {
+        JOptionPane.showMessageDialog(this,"Proyecto agregado con éxito.");
+        cargarDatos(); 
+    } else {
+        JOptionPane.showMessageDialog(this,"Error al agregar el proyecto.");
+    }
     }//GEN-LAST:event_btnAddProyect1ActionPerformed
 
     private void btnEditProyectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditProyectActionPerformed
-         InformationProyect information = new InformationProyect(); 
-        information.setVisible(true);
-        dispose();
+          int selectedRow = table.getSelectedRow(); 
+
+    if (selectedRow >= 0) { 
+		int idProyecto = (int) table.getValueAt(selectedRow, 0); 
+
+		ClassConexionSQLServer conexion = new ClassConexionSQLServer();
+		
+		
+		Proyects proyectoSeleccionado = conexion.obtenerProyectoPorId(idProyecto); 
+
+		if (proyectoSeleccionado != null) { 
+			InformationProyect informationFrame = new InformationProyect(); 
+			informationFrame.loadData(proyectoSeleccionado);
+			informationFrame.setVisible(true); 
+                       
+                        
+			
+		} else {
+			JOptionPane.showMessageDialog(this,"Error al obtener los datos del proyecto.");
+		}
+    } else {
+		JOptionPane.showMessageDialog(this,"Por favor selecciona un proyecto para editar.");
+	}
     }//GEN-LAST:event_btnEditProyectActionPerformed
 
-  
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel backgroundProyects;

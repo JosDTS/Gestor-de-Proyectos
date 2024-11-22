@@ -38,7 +38,7 @@ public class Login extends JFrame {
 
     private void initStyles() {
 
-        // Cambia de color la letra con el puntero Recuperar Contraseña
+     
         JLb_RecuperarContraseña.addMouseListener(new java.awt.event.MouseAdapter() {
 
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -48,16 +48,16 @@ public class Login extends JFrame {
 
             @Override
             public void mouseEntered(java.awt.event.MouseEvent evt) {
-                JLb_RecuperarContraseña.setForeground(new Color(0, 153, 153)); // Cambia el color al pasar el mouse
+                JLb_RecuperarContraseña.setForeground(new Color(0, 153, 153)); 
             }
 
             @Override
             public void mouseExited(java.awt.event.MouseEvent evt) {
-                JLb_RecuperarContraseña.setForeground(new Color(51, 51, 51)); // Restaura el color original
+                JLb_RecuperarContraseña.setForeground(new Color(51, 51, 51)); 
             }
         });
 
-        //Se cambia  de color las letras de la palabra registro al pasar el cursor 
+       
         JLb_Registrarse.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -66,18 +66,18 @@ public class Login extends JFrame {
 
             @Override
             public void mouseEntered(java.awt.event.MouseEvent evt) {
-                JLb_Registrarse.setForeground(new Color(0, 153, 153)); // Cambia el color al pasar el mouse
+                JLb_Registrarse.setForeground(new Color(0, 153, 153)); 
             }
 
             @Override
             public void mouseExited(java.awt.event.MouseEvent evt) {
-                JLb_Registrarse.setForeground(new Color(51, 51, 51)); // Restaura el color original
+                JLb_Registrarse.setForeground(new Color(51, 51, 51)); 
             }
         });
 
     }
 
-    //Metodos para que se vean las ventanas de la aplicacion
+    
     private void JLb_RecuperarContraseñaMouseClicked(java.awt.event.MouseEvent evt) {
 
         String Check_Email = JOptionPane.showInputDialog(null, " Ingrese su email ");
@@ -165,7 +165,7 @@ public class Login extends JFrame {
         Msj_Login.setBackground(new java.awt.Color(0, 0, 0));
         Msj_Login.setFont(new java.awt.Font("Source Serif Pro Light", 1, 36)); // NOI18N
         Msj_Login.setForeground(new java.awt.Color(0, 0, 0));
-        Msj_Login.setText("Iniciar Seción");
+        Msj_Login.setText("Iniciar Sesión");
 
         jLabel1.setBackground(new java.awt.Color(255, 255, 255));
         jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/User1.png"))); // NOI18N
@@ -359,14 +359,14 @@ public class Login extends JFrame {
     }//GEN-LAST:event_txtUserActionPerformed
 
     private void Ingresar_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Ingresar_btnActionPerformed
-     // Obtener los datos del formulario
-    String email = txtUser.getText();  // Email ingresado
-    String contraseña = new String(txtPass.getPassword());  // Contraseña ingresada
+     
+    String email = txtUser.getText();  
+    String contraseña = new String(txtPass.getPassword()); 
 
-    // Crear la clase de conexión
+    
     ClassConexionSQLServer conexion = new ClassConexionSQLServer();
     
-    // Verificar las credenciales
+  
     if (conexion.VerifyLogin(email, contraseña)) {
         JOptionPane.showMessageDialog(this, "Inicio de sesión exitoso");
         home.setVisible(true);

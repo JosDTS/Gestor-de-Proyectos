@@ -4,6 +4,11 @@
  */
 package com.mycompany.gestorproyectos;
 
+import ConexionSQL.ClassConexionSQLServer;
+import ConexionSQL.CommentsClass;
+import java.util.List;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author ESTUDIANTE
@@ -15,8 +20,24 @@ public class Comments extends javax.swing.JFrame {
      */
     public Comments() {
         initComponents();
+        cargarDatos();
     }
+private void cargarDatos() {
+        ClassConexionSQLServer conexion = new ClassConexionSQLServer();
+        List<CommentsClass> List = conexion.obtenerComentarios();
 
+        DefaultTableModel model = (DefaultTableModel) tableComments.getModel();
+        model.setRowCount(0); 
+
+        for (CommentsClass p : List) {
+            Object[] rowData = {
+                p.getIDComentario(),
+                p.getFecha_Comentario(),
+                p.getContenido()
+            };
+            model.addRow(rowData);
+        }
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always

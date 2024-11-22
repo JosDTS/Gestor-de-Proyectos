@@ -405,23 +405,27 @@ public class Register extends javax.swing.JFrame {
     }//GEN-LAST:event_txtPasswordFocusGained
 
     private void btnRegisterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegisterActionPerformed
-     // Obtener los datos del formulario
+  
     String nombre = txtName.getText();
     String apellido1 = txtFirstSurname.getText();
     String apellido2 = txtSecondSurname.getText();
     String contraseña = txtPassword.getText();
-    String fechaRegistro = txtDate.getText();  // Asegúrate de que esté en formato adecuado
-    String email = txtEmail.getText();  // El email que el usuario ingresa
+    String fechaRegistro = txtDate.getText();  
+    String email = txtEmail.getText(); 
     
-    // Crear el objeto Registro con los datos ingresados
+    
     Person nuevoRegistro = new Person (nombre, apellido1, apellido2, contraseña, fechaRegistro);
     
-    // Crear una instancia de la clase de conexión
+    
     ClassConexionSQLServer conexion = new ClassConexionSQLServer();
     
-    // Llamar al método para registrar la persona y el email
+   
     if (conexion.InsertPersons(nuevoRegistro, email)) {
         JOptionPane.showMessageDialog(this, "Registro exitoso");
+        Login login = new Login(); 
+        login.setVisible(true);
+        dispose();
+        
     } else {
         JOptionPane.showMessageDialog(this, "Error al registrar la persona o el email");
     }

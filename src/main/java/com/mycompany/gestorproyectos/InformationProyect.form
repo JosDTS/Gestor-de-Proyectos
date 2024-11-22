@@ -82,7 +82,7 @@
                                   <Group type="102" attributes="0">
                                       <Component id="lbBudgetProyect" min="-2" max="-2" attributes="0"/>
                                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                                      <Component id="txtBudgetProyedt" min="-2" pref="439" max="-2" attributes="0"/>
+                                      <Component id="txtBudgetProyect" min="-2" pref="439" max="-2" attributes="0"/>
                                   </Group>
                                   <Group type="102" attributes="0">
                                       <Component id="lbDateInitProyect" min="-2" max="-2" attributes="0"/>
@@ -163,7 +163,7 @@
                       <EmptySpace min="-2" pref="35" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="lbBudgetProyect" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="txtBudgetProyedt" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="txtBudgetProyect" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace min="-2" pref="33" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
@@ -271,7 +271,7 @@
             </Component>
             <Component class="javax.swing.JTextField" name="txtDateInitProyect">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Fecha Inicio"/>
+                <Property name="text" type="java.lang.String" value="(yyyy-MM-dd)"/>
               </Properties>
               <Events>
                 <EventHandler event="focusGained" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="txtDateInitProyectFocusGained"/>
@@ -280,7 +280,7 @@
             </Component>
             <Component class="javax.swing.JTextField" name="txtDateFinallyProyect">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Fecha Final"/>
+                <Property name="text" type="java.lang.String" value="(yyyy-MM-dd)"/>
               </Properties>
               <Events>
                 <EventHandler event="focusGained" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="txtDateFinallyProyectFocusGained"/>
@@ -297,13 +297,13 @@
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="txtStatusProyectActionPerformed"/>
               </Events>
             </Component>
-            <Component class="javax.swing.JTextField" name="txtBudgetProyedt">
+            <Component class="javax.swing.JTextField" name="txtBudgetProyect">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Presupuesto"/>
               </Properties>
               <Events>
-                <EventHandler event="focusGained" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="txtBudgetProyedtFocusGained"/>
-                <EventHandler event="focusLost" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="txtBudgetProyedtFocusLost"/>
+                <EventHandler event="focusGained" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="txtBudgetProyectFocusGained"/>
+                <EventHandler event="focusLost" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="txtBudgetProyectFocusLost"/>
               </Events>
             </Component>
             <Component class="javax.swing.JTextField" name="txtDescriptionProyect">

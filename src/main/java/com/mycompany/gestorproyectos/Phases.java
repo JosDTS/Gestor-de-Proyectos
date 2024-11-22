@@ -4,7 +4,17 @@
  */
 package com.mycompany.gestorproyectos;
 
+import ConexionSQL.ClassConexionSQLServer;
+import ConexionSQL.PhasesClass;
 import com.mycompany.gestorproyectos.ViewProyects;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
@@ -17,7 +27,29 @@ public class Phases extends javax.swing.JFrame {
      */
     public Phases() {
         initComponents();
+        cargarDatos();
     }
+    
+    
+ private void cargarDatos() {
+        ClassConexionSQLServer conexion = new ClassConexionSQLServer();
+        List<PhasesClass> List = conexion.obtenerFases();
+
+        DefaultTableModel model = (DefaultTableModel) tablePhases.getModel();
+        model.setRowCount(0); 
+
+        for (PhasesClass p : List) {
+            Object[] rowData = {
+                p.getIDFases(),
+                p.getNombre(),
+                p.getDescripcion(),
+                p.getFechaFase(),
+                p.getEstadoFAse()
+            };
+            model.addRow(rowData);
+        }
+    }
+   
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -183,8 +215,8 @@ public class Phases extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnBackPhasesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBackPhasesActionPerformed
-        Phases phases = new Phases();
-        phases.setVisible(true);
+        ViewProyects view = new ViewProyects();
+        view.setVisible(true);
         dispose();
     }//GEN-LAST:event_btnBackPhasesActionPerformed
 

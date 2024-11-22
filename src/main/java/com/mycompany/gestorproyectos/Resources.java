@@ -4,6 +4,11 @@
  */
 package com.mycompany.gestorproyectos;
 
+import ConexionSQL.ClassConexionSQLServer;
+import ConexionSQL.ResourcesClass;
+import java.util.List;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.text.View;
 
 /**
@@ -19,6 +24,26 @@ public class Resources extends javax.swing.JFrame {
      
     public Resources() {
         initComponents();
+        cargarDatos();
+    }
+    
+    
+    private void cargarDatos() {
+        ClassConexionSQLServer conexion = new ClassConexionSQLServer();
+        List<ResourcesClass> List = conexion.obtenerRecursos();
+
+        DefaultTableModel model = (DefaultTableModel) tableResources.getModel();
+        model.setRowCount(0); 
+
+        for (ResourcesClass p : List) {
+            Object[] rowData = {
+                p.getIDRecurso(),
+                p.getTipoRecurso(),
+                p.getCantidadRecursos(),
+                p.getCosto()
+            };
+            model.addRow(rowData);
+        }
     }
 
     /**
@@ -57,17 +82,17 @@ public class Resources extends javax.swing.JFrame {
 
         tableResources.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null}
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
             },
             new String [] {
-                "ID Recursos", "Nombre", "Tipo Recurso", "Cantidad Recursos", "Costos"
+                "ID Recursos", "Tipo Recurso", "Cantidad Recursos", "Costos"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false
+                false, false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -75,10 +100,6 @@ public class Resources extends javax.swing.JFrame {
             }
         });
         jScrollPane1.setViewportView(tableResources);
-        if (tableResources.getColumnModel().getColumnCount() > 0) {
-            tableResources.getColumnModel().getColumn(1).setMinWidth(60);
-            tableResources.getColumnModel().getColumn(1).setMaxWidth(60);
-        }
 
         btnBack.setBackground(new java.awt.Color(255, 255, 255));
         btnBack.setIcon(new javax.swing.ImageIcon(getClass().getResource("/fluent-emoji-high-contrast--left-arrow.png"))); // NOI18N
@@ -202,9 +223,18 @@ public class Resources extends javax.swing.JFrame {
     }//GEN-LAST:event_btnBackActionPerformed
 
     private void btnEditResource1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditResource1ActionPerformed
-       InformationResources informationResource = new InformationResources(); 
-        informationResource.setVisible(true);
-        dispose();
+      ClassConexionSQLServer conexion = new ClassConexionSQLServer();
+
+        
+        boolean exito = conexion.insertarRecursos();
+
+        if (exito) {
+            JOptionPane.showMessageDialog(this, "Recurso agregado con éxito.");
+            cargarDatos();
+        } else {
+            JOptionPane.showMessageDialog(this, "Error al agregar el recurso.");
+        }
+        
     }//GEN-LAST:event_btnEditResource1ActionPerformed
 
     private void btnEditResourceActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditResourceActionPerformed

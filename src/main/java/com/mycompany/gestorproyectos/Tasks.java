@@ -4,6 +4,11 @@
  */
 package com.mycompany.gestorproyectos;
 
+import ConexionSQL.ClassConexionSQLServer;
+import ConexionSQL.TasksClass;
+import java.util.List;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author ESTUDIANTE
@@ -15,8 +20,32 @@ public class Tasks extends javax.swing.JFrame {
      */
     public Tasks() {
         initComponents();
+        cargarDatos();
     }
 
+    private void cargarDatos() {
+        ClassConexionSQLServer conexion = new ClassConexionSQLServer();
+        List<TasksClass> tareasList = conexion.obtenerTareas();
+
+        DefaultTableModel model = (DefaultTableModel) tableTasks.getModel();
+        model.setRowCount(0); 
+
+        for (TasksClass p : tareasList) {
+            Object[] rowData = {
+                p.getID_Tareas(),
+                p.getNombre(),
+                p.getDescripcion(),
+                p.getFecha_Inicio(),
+                p.getFecha_Fin(),
+                p.getEstado(),
+                p.getPrioridad(),
+              
+            };
+            model.addRow(rowData);
+        }
+    }
+    
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always

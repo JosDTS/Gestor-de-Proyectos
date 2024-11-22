@@ -4,6 +4,15 @@
  */
 package com.mycompany.gestorproyectos;
 
+import ConexionSQL.ClassConexionSQLServer;
+import ConexionSQL.Proyects;
+import java.awt.event.ActionEvent;
+import java.sql.Date;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.*;
+
 /**
  *
  * @author ESTUDIANTE
@@ -14,17 +23,14 @@ public class InformationProyect extends javax.swing.JFrame {
      * Creates new form InformationProyect
      */
     RecoverPassword recoverPass = new RecoverPassword();
+    
+    private Proyects proyecto; 
 
     public InformationProyect() {
+        super("Editar Proyecto");
         initComponents();
-
-        recoverPass.StylePlaceHolder(txtNameProyect);
-        recoverPass.StylePlaceHolder(txtDateInitProyect);
-        recoverPass.StylePlaceHolder(txtDateFinallyProyect);
-        recoverPass.StylePlaceHolder(txtStatusProyect);
-        recoverPass.StylePlaceHolder(txtBudgetProyedt);
-        recoverPass.StylePlaceHolder(txtDescriptionProyect);
-        recoverPass.StylePlaceHolder(txtDepartamentProyect);
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE); 
+        setupPlaceholders(); 
     }
 
     /**
@@ -49,7 +55,7 @@ public class InformationProyect extends javax.swing.JFrame {
         txtDateInitProyect = new javax.swing.JTextField();
         txtDateFinallyProyect = new javax.swing.JTextField();
         txtStatusProyect = new javax.swing.JTextField();
-        txtBudgetProyedt = new javax.swing.JTextField();
+        txtBudgetProyect = new javax.swing.JTextField();
         txtDescriptionProyect = new javax.swing.JTextField();
         txtDepartamentProyect = new javax.swing.JTextField();
         btnProyects = new javax.swing.JButton();
@@ -106,7 +112,7 @@ public class InformationProyect extends javax.swing.JFrame {
             }
         });
 
-        txtDateInitProyect.setText("Fecha Inicio");
+        txtDateInitProyect.setText("(yyyy-MM-dd)");
         txtDateInitProyect.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(java.awt.event.FocusEvent evt) {
                 txtDateInitProyectFocusGained(evt);
@@ -116,7 +122,7 @@ public class InformationProyect extends javax.swing.JFrame {
             }
         });
 
-        txtDateFinallyProyect.setText("Fecha Final");
+        txtDateFinallyProyect.setText("(yyyy-MM-dd)");
         txtDateFinallyProyect.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(java.awt.event.FocusEvent evt) {
                 txtDateFinallyProyectFocusGained(evt);
@@ -141,13 +147,13 @@ public class InformationProyect extends javax.swing.JFrame {
             }
         });
 
-        txtBudgetProyedt.setText("Presupuesto");
-        txtBudgetProyedt.addFocusListener(new java.awt.event.FocusAdapter() {
+        txtBudgetProyect.setText("Presupuesto");
+        txtBudgetProyect.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(java.awt.event.FocusEvent evt) {
-                txtBudgetProyedtFocusGained(evt);
+                txtBudgetProyectFocusGained(evt);
             }
             public void focusLost(java.awt.event.FocusEvent evt) {
-                txtBudgetProyedtFocusLost(evt);
+                txtBudgetProyectFocusLost(evt);
             }
         });
 
@@ -217,7 +223,7 @@ public class InformationProyect extends javax.swing.JFrame {
                             .addGroup(jPanel2Layout.createSequentialGroup()
                                 .addComponent(lbBudgetProyect)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(txtBudgetProyedt, javax.swing.GroupLayout.PREFERRED_SIZE, 439, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(txtBudgetProyect, javax.swing.GroupLayout.PREFERRED_SIZE, 439, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(jPanel2Layout.createSequentialGroup()
                                 .addComponent(lbDateInitProyect)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -277,7 +283,7 @@ public class InformationProyect extends javax.swing.JFrame {
                 .addGap(35, 35, 35)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lbBudgetProyect)
-                    .addComponent(txtBudgetProyedt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtBudgetProyect, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(33, 33, 33)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(lbDescriptionProyect)
@@ -323,38 +329,126 @@ public class InformationProyect extends javax.swing.JFrame {
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
+  
+
+    public void loadData(Proyects proyecto) {
+        this.proyecto = proyecto; 
+
+        if (proyecto != null) {
+            
+            txtNameProyect.setText(proyecto.getNombre());
+            txtDateInitProyect.setText(proyecto.getFechaInicio().toString());
+            txtDateFinallyProyect.setText(proyecto.getFechaFin().toString());
+            txtStatusProyect.setText(proyecto.getEstado());
+            txtBudgetProyect.setText(String.valueOf(proyecto.getPresupuesto()));
+            txtDescriptionProyect.setText(proyecto.getDescripcion());
+            txtDepartamentProyect.setText(proyecto.getDepartamentoEncargado());
+        }
+    }
+    
+
+    private void guardarProyecto() {
+        if (proyecto == null) {
+            JOptionPane.showMessageDialog(this, "No se ha cargado un proyecto para editar.");
+            return;
+        }
+
+        String nombre = txtNameProyect.getText();
+        String fechaInicioStr = txtDateInitProyect.getText();
+        String fechaFinStr = txtDateFinallyProyect.getText();
+        String estado = txtStatusProyect.getText();
+
+        float presupuesto;
+        try {
+            presupuesto = Float.parseFloat(txtBudgetProyect.getText());
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "El presupuesto debe ser un número válido.");
+            return;
+        }
+
+        String descripcion = txtDescriptionProyect.getText();
+        String departamentoEncargado = txtDepartamentProyect.getText();
+
+        
+        Date fechaInicio;
+        Date fechaFin;
+
+        try {
+            fechaInicio = Date.valueOf(fechaInicioStr);
+            fechaFin = Date.valueOf(fechaFinStr);
+        } catch (IllegalArgumentException e) {
+            JOptionPane.showMessageDialog(this, "Formato de fecha inválido. Use YYYY-MM-DD.");
+            return; 
+        }
+
+        
+        Proyects proyectoActualizado = new Proyects(
+                this.proyecto.getIdProyecto(), 
+                nombre,
+                fechaInicio,
+                fechaFin,
+                estado,
+                presupuesto,
+                descripcion,
+                departamentoEncargado
+        );
+
+        ClassConexionSQLServer conexion = new ClassConexionSQLServer();
+
+        boolean exito = conexion.editarProyecto(proyectoActualizado);
+
+        if (exito) {
+            JOptionPane.showMessageDialog(this, "Proyecto editado con éxito.");
+          
+            dispose();
+        } else {
+            JOptionPane.showMessageDialog(this, "Error al editar el proyecto.");
+        }
+    }
+
+    private void setupPlaceholders() {
+        RecoverPassword recoverPass = new RecoverPassword();
+        recoverPass.StylePlaceHolder(txtNameProyect);
+        recoverPass.StylePlaceHolder(txtDateInitProyect);
+        recoverPass.StylePlaceHolder(txtDateFinallyProyect);
+        recoverPass.StylePlaceHolder(txtStatusProyect);
+        recoverPass.StylePlaceHolder(txtBudgetProyect);
+        recoverPass.StylePlaceHolder(txtDescriptionProyect);
+        recoverPass.StylePlaceHolder(txtDepartamentProyect);
+    }
+
     private void txtNameProyectFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtNameProyectFocusGained
         if (txtNameProyect.getText().equals("Nombre de Proyecto")) {
-            txtNameProyect.setText(null); 
+            txtNameProyect.setText(null);
             txtNameProyect.requestFocus();
-            
+
             recoverPass.DeleteStylePlaceHolder(txtNameProyect);
         }
     }//GEN-LAST:event_txtNameProyectFocusGained
 
     private void txtDateInitProyectFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtDateInitProyectFocusGained
-         if (txtDateInitProyect.getText().equals("Fecha Inicio")) {
-            txtDateInitProyect.setText(null); 
+        if (txtDateInitProyect.getText().equals("(yyyy-MM-dd)")) {
+            txtDateInitProyect.setText(null);
             txtDateInitProyect.requestFocus();
-            
+
             recoverPass.DeleteStylePlaceHolder(txtDateInitProyect);
         }
     }//GEN-LAST:event_txtDateInitProyectFocusGained
 
     private void txtDateFinallyProyectFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtDateFinallyProyectFocusGained
-          if (txtDateFinallyProyect.getText().equals("Fecha Final")) {
-            txtDateFinallyProyect.setText(null); 
+        if (txtDateFinallyProyect.getText().equals("(yyyy-MM-dd)")) {
+            txtDateFinallyProyect.setText(null);
             txtDateFinallyProyect.requestFocus();
-            
+
             recoverPass.DeleteStylePlaceHolder(txtDateFinallyProyect);
         }
     }//GEN-LAST:event_txtDateFinallyProyectFocusGained
 
     private void txtStatusProyectFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtStatusProyectFocusGained
-          if (txtStatusProyect.getText().equals("Estado")) {
-            txtStatusProyect.setText(null); 
+        if (txtStatusProyect.getText().equals("Estado")) {
+            txtStatusProyect.setText(null);
             txtStatusProyect.requestFocus();
-            
+
             recoverPass.DeleteStylePlaceHolder(txtStatusProyect);
         }
     }//GEN-LAST:event_txtStatusProyectFocusGained
@@ -363,29 +457,29 @@ public class InformationProyect extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_txtStatusProyectActionPerformed
 
-    private void txtBudgetProyedtFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtBudgetProyedtFocusGained
-          if (txtBudgetProyedt.getText().equals("Presupuesto")) {
-            txtBudgetProyedt.setText(null); 
-            txtBudgetProyedt.requestFocus();
-            
-            recoverPass.DeleteStylePlaceHolder(txtBudgetProyedt);
+    private void txtBudgetProyectFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtBudgetProyectFocusGained
+        if (txtBudgetProyect.getText().equals("Presupuesto")) {
+            txtBudgetProyect.setText(null);
+            txtBudgetProyect.requestFocus();
+
+            recoverPass.DeleteStylePlaceHolder(txtBudgetProyect);
         }
-    }//GEN-LAST:event_txtBudgetProyedtFocusGained
+    }//GEN-LAST:event_txtBudgetProyectFocusGained
 
     private void txtDescriptionProyectFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtDescriptionProyectFocusGained
-          if (txtDescriptionProyect.getText().equals("Descripcion")) {
-            txtDescriptionProyect.setText(null); 
+        if (txtDescriptionProyect.getText().equals("Descripcion")) {
+            txtDescriptionProyect.setText(null);
             txtDescriptionProyect.requestFocus();
-            
+
             recoverPass.DeleteStylePlaceHolder(txtDescriptionProyect);
         }
     }//GEN-LAST:event_txtDescriptionProyectFocusGained
 
     private void txtDepartamentProyectFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtDepartamentProyectFocusGained
         if (txtDepartamentProyect.getText().equals("Departamento Encargado")) {
-            txtDepartamentProyect.setText(null); 
+            txtDepartamentProyect.setText(null);
             txtDepartamentProyect.requestFocus();
-            
+
             recoverPass.DeleteStylePlaceHolder(txtDepartamentProyect);
         }
     }//GEN-LAST:event_txtDepartamentProyectFocusGained
@@ -398,16 +492,16 @@ public class InformationProyect extends javax.swing.JFrame {
     }//GEN-LAST:event_txtNameProyectFocusLost
 
     private void txtDateInitProyectFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtDateInitProyectFocusLost
-       if (txtDateInitProyect.getText().length() == 0) {
+        if (txtDateInitProyect.getText().length() == 0) {
             recoverPass.StylePlaceHolder(txtDateInitProyect);
-            txtDateInitProyect.setText("Fecha Inicio");
+            txtDateInitProyect.setText("yyyy-MM-dd");
         }
     }//GEN-LAST:event_txtDateInitProyectFocusLost
 
     private void txtDateFinallyProyectFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtDateFinallyProyectFocusLost
         if (txtDateFinallyProyect.getText().length() == 0) {
             recoverPass.StylePlaceHolder(txtDateFinallyProyect);
-            txtDateFinallyProyect.setText("Fecha Final");
+            txtDateFinallyProyect.setText("yyyy-MM-dd");
         }
     }//GEN-LAST:event_txtDateFinallyProyectFocusLost
 
@@ -418,33 +512,33 @@ public class InformationProyect extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_txtStatusProyectFocusLost
 
-    private void txtBudgetProyedtFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtBudgetProyedtFocusLost
-        if (txtBudgetProyedt.getText().length() == 0) {
-            recoverPass.StylePlaceHolder(txtBudgetProyedt);
-            txtBudgetProyedt.setText("Presupuesto");
+    private void txtBudgetProyectFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtBudgetProyectFocusLost
+        if (txtBudgetProyect.getText().length() == 0) {
+            recoverPass.StylePlaceHolder(txtBudgetProyect);
+            txtBudgetProyect.setText("Presupuesto");
         }
-    }//GEN-LAST:event_txtBudgetProyedtFocusLost
+    }//GEN-LAST:event_txtBudgetProyectFocusLost
 
     private void txtDescriptionProyectFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtDescriptionProyectFocusLost
-     if (txtDescriptionProyect.getText().length() == 0) {
+        if (txtDescriptionProyect.getText().length() == 0) {
             recoverPass.StylePlaceHolder(txtDescriptionProyect);
             txtDescriptionProyect.setText("Descripcion");
-        } 
+        }
     }//GEN-LAST:event_txtDescriptionProyectFocusLost
 
     private void txtDepartamentProyectFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtDepartamentProyectFocusLost
-       if (txtDepartamentProyect.getText().length() == 0) {
+        if (txtDepartamentProyect.getText().length() == 0) {
             recoverPass.StylePlaceHolder(txtDepartamentProyect);
             txtDepartamentProyect.setText("Departamento Encargado");
         }
     }//GEN-LAST:event_txtDepartamentProyectFocusLost
 
     private void formWindowGainedFocus(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowGainedFocus
-          this.requestFocusInWindow(); 
+        this.requestFocusInWindow();
     }//GEN-LAST:event_formWindowGainedFocus
 
     private void btnProyectsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnProyectsActionPerformed
-       Home home = new Home();
+        Home home = new Home();
         home.setVisible(true);
         dispose();
     }//GEN-LAST:event_btnProyectsActionPerformed
@@ -454,6 +548,8 @@ public class InformationProyect extends javax.swing.JFrame {
     }//GEN-LAST:event_btnConfirmAddProyectsMouseClicked
 
     private void btnConfirmAddProyectsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConfirmAddProyectsActionPerformed
+        guardarProyecto();
+    
 
     }//GEN-LAST:event_btnConfirmAddProyectsActionPerformed
 
@@ -477,7 +573,7 @@ public class InformationProyect extends javax.swing.JFrame {
     private javax.swing.JLabel lbDescriptionProyect;
     private javax.swing.JLabel lbNameProyect;
     private javax.swing.JLabel lbStatusProyect;
-    private javax.swing.JTextField txtBudgetProyedt;
+    private javax.swing.JTextField txtBudgetProyect;
     private javax.swing.JTextField txtDateFinallyProyect;
     private javax.swing.JTextField txtDateInitProyect;
     private javax.swing.JTextField txtDepartamentProyect;
