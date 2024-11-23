@@ -7,6 +7,7 @@ package com.mycompany.gestorproyectos;
 import ConexionSQL.ClassConexionSQLServer;
 import ConexionSQL.TasksClass;
 import java.util.List;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -44,6 +45,30 @@ public class Tasks extends javax.swing.JFrame {
             model.addRow(rowData);
         }
     }
+    
+     private void eliminarTarea() {
+    int selectedRow = tableTasks.getSelectedRow(); 
+
+    if (selectedRow >= 0) { 
+        int idTarea = (int) tableTasks.getValueAt(selectedRow, 0); 
+
+        int confirm = JOptionPane.showConfirmDialog(this, "¿Estás seguro de que deseas eliminar esta Tarea?", "Confirmar eliminación", JOptionPane.YES_NO_OPTION);
+        
+        if (confirm == JOptionPane.YES_OPTION) {
+            ClassConexionSQLServer conexion = new ClassConexionSQLServer();
+            boolean exito = conexion.eliminarTarea(idTarea); 
+
+            if (exito) {
+                JOptionPane.showMessageDialog(this, "Tarea eliminado con éxito.");
+                cargarDatos();
+            } else {
+                JOptionPane.showMessageDialog(this, "Error al eliminar el Tarea.");
+            }
+        }
+    } else {
+        JOptionPane.showMessageDialog(this, "Por favor selecciona un tarea para eliminar.");
+    }
+}
     
     
     /**
@@ -92,6 +117,11 @@ public class Tasks extends javax.swing.JFrame {
         btnEliminateTasks.setForeground(new java.awt.Color(255, 255, 255));
         btnEliminateTasks.setIcon(new javax.swing.ImageIcon(getClass().getResource("/tabler--trash.png"))); // NOI18N
         btnEliminateTasks.setText("Eliminar");
+        btnEliminateTasks.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEliminateTasksActionPerformed(evt);
+            }
+        });
 
         btnBack.setBackground(new java.awt.Color(255, 255, 255));
         btnBack.setIcon(new javax.swing.ImageIcon(getClass().getResource("/fluent-emoji-high-contrast--left-arrow.png"))); // NOI18N
@@ -217,9 +247,17 @@ public class Tasks extends javax.swing.JFrame {
     }//GEN-LAST:event_btnBackActionPerformed
 
     private void btnAddTasksActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddTasksActionPerformed
-        InformationTasks informationTasks = new InformationTasks();
-        informationTasks.setVisible(true);
-        dispose();
+       ClassConexionSQLServer conexion = new ClassConexionSQLServer();
+
+        
+        boolean exito = conexion.insertarTareas();
+
+        if (exito) {
+            JOptionPane.showMessageDialog(this, "Tarea agregado con éxito.");
+            cargarDatos(); 
+        } else {
+            JOptionPane.showMessageDialog(this, "Error al agregar la tarea .");
+        }
     }//GEN-LAST:event_btnAddTasksActionPerformed
 
     private void btnEditTasksActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditTasksActionPerformed
@@ -227,6 +265,10 @@ public class Tasks extends javax.swing.JFrame {
         informationTasks.setVisible(true);
         dispose();
     }//GEN-LAST:event_btnEditTasksActionPerformed
+
+    private void btnEliminateTasksActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminateTasksActionPerformed
+     eliminarTarea();
+    }//GEN-LAST:event_btnEliminateTasksActionPerformed
 
     /**
      * @param args the command line arguments

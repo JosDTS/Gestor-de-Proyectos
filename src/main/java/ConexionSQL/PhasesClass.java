@@ -15,14 +15,14 @@ public class PhasesClass {
     private String Nombre;
     private String Descripcion;
     private Date FechaFase;
-    private String EstadoFAse;
+    private String EstadoFase;
 
-    public PhasesClass(int IDFases, String Nombre, String Descripcion, Date FechaFase, String EstadoFAse) {
+    public PhasesClass(int IDFases, String Nombre, String Descripcion, Date FechaFase, String EstadoFase) {
         this.IDFases = IDFases;
         this.Nombre = Nombre;
         this.Descripcion = Descripcion;
         this.FechaFase = FechaFase;
-        this.EstadoFAse = EstadoFAse;
+        this.EstadoFase = EstadoFase;
     }
 
     public PhasesClass() {
@@ -60,12 +60,12 @@ public class PhasesClass {
         this.FechaFase = FechaFase;
     }
 
-    public String getEstadoFAse() {
-        return EstadoFAse;
+    public String getEstadoFase() {
+        return EstadoFase;
     }
 
-    public void setEstadoFAse(String EstadoFAse) {
-        this.EstadoFAse = EstadoFAse;
+    public void setEstadoFase(String EstadoFase) {
+        this.EstadoFase = EstadoFase;
     }
     
     

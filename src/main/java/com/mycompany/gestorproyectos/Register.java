@@ -13,6 +13,7 @@ import ConexionSQL.ClassConexionSQLServer;
 
 import java.awt.Color;
 import java.awt.Font; 
+import java.sql.Date;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField; 
 

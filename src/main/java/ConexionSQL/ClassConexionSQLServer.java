@@ -67,9 +67,7 @@ public class ClassConexionSQLServer {
                         rs.getDate("Fecha_inicio"),
                         rs.getDate("Fecha_fin"),
                         rs.getString("Estado"),
-                        rs.getFloat("Presupuesto"),
-                        rs.getString("Prioridad"),
-                        rs.getString("Departamento_Encargado")
+                        rs.getString("Prioridad")
                 );
                 tasks.add(ra);
             }
@@ -509,6 +507,8 @@ public boolean editarProyecto(Proyects proyecto) {
         }
         return Phases;
     }
+ 
+ 
     public List<CommentsClass> obtenerComentarios() {
         List<CommentsClass> Comments = new ArrayList<>();
 
@@ -586,6 +586,7 @@ public boolean insertarRecursos() {
         }
     }
 
+
     private int obtenerUltimoIDRecurso() {
         String query = "SELECT MAX(ID_Recurso) FROM Recursos";
 
@@ -601,7 +602,404 @@ public boolean insertarRecursos() {
         return 0;  
     }
 
+/**
+ *  Metodo para enlistar los proyectos
+ * @param nombre
+ * @return 
+ */
+    
+    public List<Proyects> buscarProyectosPorNombre(String Id_Proyecto) {
+    List<Proyects> proyectos = new ArrayList<>();
+    String query = "SELECT * FROM Proyectos WHERE ID_Proyecto LIKE ?"; 
 
+    try (Connection con = obtenerConexion();
+         PreparedStatement pst = con.prepareStatement(query)) {
+
+        pst.setString(1, "%" + Id_Proyecto + "%"); 
+        ResultSet rs = pst.executeQuery();
+
+        while (rs.next()) {
+            Proyects proyecto = new Proyects(
+                rs.getInt("ID_Proyecto"),
+                rs.getString("Nombre"),
+                rs.getDate("Fecha_inicio"),
+                rs.getDate("Fecha_fin"),
+                rs.getString("Estado"),
+                rs.getFloat("Presupuesto"),
+                rs.getString("Descripcion"),
+                rs.getString("Departamento_Encargado")
+            );
+            proyectos.add(proyecto);
+        }
+    } catch (SQLException e) {
+        e.printStackTrace(); 
+    }
+
+    return proyectos;
+}
+    /**
+     * Metodo para eliminar los proyectos
+     * @param idProyecto
+     * @return 
+     * 
+     */
     
+    public boolean eliminarProyecto(int idProyecto) {
+    String query = "DELETE FROM Proyectos WHERE ID_Proyecto = ?"; 
+
+    try (Connection con = obtenerConexion();
+         PreparedStatement pst = con.prepareStatement(query)) {
+
+        pst.setInt(1, idProyecto); 
+        int rowsAffected = pst.executeUpdate();
+        
+        return rowsAffected > 0; 
+    } catch (SQLException e) {
+        e.printStackTrace(); 
+        return false;
+    }
+}
+
+   
+   public Person obtenerDatosUsuario(String email) {
+       String query = "SELECT  p.Nombre, p.Apellido_1, p.Apellido_2, p.Contraseña, p.Fecha_Registro "
+                      + "FROM Personas p "
+                      + "INNER JOIN Emails e ON p.ID_Persona = e.ID_Persona "
+                      + "WHERE e.Email = ?";
+
+       try (Connection con = obtenerConexion(); 
+            PreparedStatement pst = con.prepareStatement(query)) {
+
+           pst.setString(1, email);  
+           
+           try (ResultSet rs = pst.executeQuery()) {
+               if (rs.next()) {
+                   return new Person(
+                     
+                       rs.getString("Nombre"),
+                       rs.getString("Apellido_1"),
+                       rs.getString("Apellido_2"),
+                       rs.getString("Contraseña"),
+                       rs.getString("Fecha_Registro")
+                   );
+               }
+           }
+       } catch (SQLException e) {
+           JOptionPane.showMessageDialog(null, "Error al obtener datos del usuario: " + e.getMessage());
+       }
+       
+       return null; 
+   }
+   
+   
+   
+    /**
+     * Insertar tareas
+     * @return
+     */
+    public boolean insertarTareas() {
+      
+        String nombre = JOptionPane.showInputDialog("Ingrese el nombre de la tarea:");
+         String descripcion = JOptionPane.showInputDialog("Ingrese la descripción de la tarea:");
+        String fechaInicioStr = JOptionPane.showInputDialog("Ingrese la fecha de inicio (YYYY-MM-DD):");
+        String fechaFinStr = JOptionPane.showInputDialog("Ingrese la fecha de fin (YYYY-MM-DD):");
+        String estado = JOptionPane.showInputDialog("Ingrese el estado de la tarea:");
+        String prioridad = JOptionPane.showInputDialog("Ingrese la prioridad de la tarea:");
+       
+        
+
+        if (nombre == null || fechaInicioStr == null || fechaFinStr == null || estado == null
+                || prioridad == null || descripcion == null ) {
+            JOptionPane.showMessageDialog(null, "Todos los campos son obligatorios.");
+            return false;
+        }
+
+       
+        Date fechaInicio;
+        Date fechaFin;
+        try {
+            fechaInicio = Date.valueOf(fechaInicioStr);
+            fechaFin = Date.valueOf(fechaFinStr);
+        } catch (IllegalArgumentException e) {
+            JOptionPane.showMessageDialog(null, "Formato de fecha inválido. Use YYYY-MM-DD.");
+            return false;
+        }
+
+        
+        TasksClass nuevaTarea = new TasksClass(0, nombre,descripcion, fechaInicio, fechaFin, estado, prioridad);
+
+       
+        int nuevoID_Tarea = obtenerUltimoIdInforme() + 1;
+
+        String queryInsertar = "INSERT INTO Tareas (ID_Tareas, Nombre, Descripcion, Fecha_inicio, Fecha_fin, Estado,Prioridad) VALUES (?, ?, ?, ?, ?, ?,?)";
+
+        try (Connection con = obtenerConexion(); PreparedStatement pstInsertar = con.prepareStatement(queryInsertar)) {
+
+            pstInsertar.setInt(1, nuevoID_Tarea);
+            pstInsertar.setString(2, nuevaTarea.getNombre());
+            pstInsertar.setString(3, nuevaTarea.getDescripcion());
+            pstInsertar.setDate(4, new java.sql.Date(nuevaTarea.getFecha_Inicio().getTime()));
+            pstInsertar.setDate(5, new java.sql.Date(nuevaTarea.getFecha_Fin().getTime()));
+            pstInsertar.setString(6, nuevaTarea.getEstado());
+             pstInsertar.setString(7, nuevaTarea.getPrioridad());
+             
+            int filasInsertadas = pstInsertar.executeUpdate();
+
+            return filasInsertadas > 0; 
+
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, "Error al insertar el tareas: " + e.getMessage());
+            return false;
+        }
+    }
     
+    private int obtenerUltimoIdInforme() {
+        String query = "SELECT MAX(ID_Tareas) FROM Tareas";
+
+        try (Connection con = obtenerConexion(); Statement stmt = con.createStatement(); ResultSet rs = stmt.executeQuery(query)) {
+
+            if (rs.next()) {
+                return rs.getInt(1);  
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Error al obtener el último ID_Tarea: " + e.getMessage());
+        }
+
+        return 0;  
+    }
+    /**
+     * Metodo para eliminar tareas
+     * @param idTarea
+     * @return 
+     */
+
+     public boolean eliminarTarea(int idTarea) {
+    String query = "DELETE FROM Tareas WHERE ID_Tareas = ?"; 
+
+    try (Connection con = obtenerConexion();
+         PreparedStatement pst = con.prepareStatement(query)) {
+
+        pst.setInt(1, idTarea); 
+        int rowsAffected = pst.executeUpdate();
+        
+        return rowsAffected > 0; 
+    } catch (SQLException e) {
+        e.printStackTrace(); 
+        return false;
+    }
+}
+
+
+
+
+/**
+ * Insertar Reportes
+ */
+    public boolean insertarReports() {
+        
+        String autor = JOptionPane.showInputDialog("Ingrese el nombre del autor:");
+         String descripcion = JOptionPane.showInputDialog("Ingrese la descripción del reporte:");
+        String fechaCreacionStr = JOptionPane.showInputDialog("Ingrese la fecha de creacion (YYYY-MM-DD):");
+        
+       
+        
+
+        if (autor == null || descripcion == null || fechaCreacionStr == null ) {
+            JOptionPane.showMessageDialog(null, "Todos los campos son obligatorios.");
+            return false;
+        }
+
+      
+        Date fechaCreacion;
+     
+        try {
+            fechaCreacion = Date.valueOf(fechaCreacionStr);
+        
+        } catch (IllegalArgumentException e) {
+            JOptionPane.showMessageDialog(null, "Formato de fecha inválido. Use YYYY-MM-DD.");
+            return false;
+        }
+
+        
+        ReportsClass nuevoInforme = new ReportsClass(0, autor,descripcion, fechaCreacion);
+
+      
+        int nuevoID_Informe = obtenerUltimoIDInforme() + 1;
+
+        String queryInsertar = "INSERT INTO Informes (ID_Informe, Autor, Descripcion, Fecha_Creacion) VALUES (?, ?, ?, ?)";
+
+        try (Connection con = obtenerConexion(); PreparedStatement pstInsertar = con.prepareStatement(queryInsertar)) {
+
+            pstInsertar.setInt(1, nuevoID_Informe);
+            pstInsertar.setString(2, nuevoInforme.getAutor());
+            pstInsertar.setString(3, nuevoInforme.getDescripcion());
+            pstInsertar.setDate(4, new java.sql.Date(nuevoInforme.getFechaCreacion().getTime()));
+           
+
+            int filasInsertadas = pstInsertar.executeUpdate();
+
+            return filasInsertadas > 0; 
+
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, "Error al insertar el informes: " + e.getMessage());
+            return false;
+        }
+    }
+    private int obtenerUltimoIDInforme() {
+        String query = "SELECT MAX(ID_Informe) FROM Informes";
+
+        try (Connection con = obtenerConexion(); Statement stmt = con.createStatement(); ResultSet rs = stmt.executeQuery(query)) {
+
+            if (rs.next()) {
+                return rs.getInt(1);  
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Error al obtener el último ID_Informe: " + e.getMessage());
+        }
+
+        return 0;  
+    }
+    
+
+
+
+/**
+ * Insertar Fases
+ */
+    public boolean insertarFases() {
+        
+        String nombre = JOptionPane.showInputDialog("Ingrese el nombre de la fase:");
+         String descripcion = JOptionPane.showInputDialog("Ingrese la descripción de la fase:");
+        String fechaCreacionStr = JOptionPane.showInputDialog("Ingrese la fecha de la fase (YYYY-MM-DD):");
+        String estado=JOptionPane.showInputDialog("Ingrese el estado de la fase:");
+        
+       
+        
+
+        
+        if (nombre == null || descripcion == null || fechaCreacionStr == null || estado == null ) {
+            JOptionPane.showMessageDialog(null, "Todos los campos son obligatorios.");
+            return false;
+        }
+
+       
+        Date fechaCreacion;
+     
+        try {
+            fechaCreacion = Date.valueOf(fechaCreacionStr);
+        
+        } catch (IllegalArgumentException e) {
+            JOptionPane.showMessageDialog(null, "Formato de fecha inválido. Use YYYY-MM-DD.");
+            return false;
+        }
+
+        
+        PhasesClass nuevaFase = new PhasesClass(0, nombre,descripcion, fechaCreacion, estado);
+
+       
+        int nuevoID_Fase = obtenerUltimoIDFase() + 1;
+
+        String queryInsertar = "INSERT INTO Fases (ID_Fases, Nombre, Descripcion, Fecha_Fase, Estado_Fase) VALUES (?, ?, ?, ?, ?)";
+
+        try (Connection con = obtenerConexion(); PreparedStatement pstInsertar = con.prepareStatement(queryInsertar)) {
+
+            pstInsertar.setInt(1, nuevoID_Fase);
+            pstInsertar.setString(2, nuevaFase.getNombre());
+            pstInsertar.setString(3, nuevaFase.getDescripcion());
+            pstInsertar.setDate(4, new java.sql.Date(nuevaFase.getFechaFase().getTime()));
+            pstInsertar.setString(5, nuevaFase.getEstadoFase());
+
+            int filasInsertadas = pstInsertar.executeUpdate();
+
+            return filasInsertadas > 0; 
+
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, "Error al insertar el informes: " + e.getMessage());
+            return false;
+        }
+    }
+    private int obtenerUltimoIDFase() {
+        String query = "SELECT MAX(ID_Fases) FROM Fases";
+
+        try (Connection con = obtenerConexion(); Statement stmt = con.createStatement(); ResultSet rs = stmt.executeQuery(query)) {
+
+            if (rs.next()) {
+                return rs.getInt(1);  
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Error al obtener el último ID_Fase: " + e.getMessage());
+        }
+
+        return 0;  
+    }
+
+
+/**
+ * Insertar Comentarios
+ */
+    public boolean insertarComentarios() {
+       
+        String Comentario = JOptionPane.showInputDialog("Ingrese el comentario:");  
+        String fechaCreacionStr = JOptionPane.showInputDialog("Ingrese la fecha del comentario (YYYY-MM-DD):");
+        
+       
+        
+
+        
+        if (Comentario == null || fechaCreacionStr==null) {
+            JOptionPane.showMessageDialog(null, "Todos los campos son obligatorios.");
+            return false;
+        }
+
+        
+        Date fechaCreacion;
+     
+        try {
+            fechaCreacion = Date.valueOf(fechaCreacionStr);
+        
+        } catch (IllegalArgumentException e) {
+            JOptionPane.showMessageDialog(null, "Formato de fecha inválido. Use YYYY-MM-DD.");
+            return false;
+        }
+
+       
+        CommentsClass nuevoComentario = new CommentsClass(0,fechaCreacion, Comentario);
+
+      
+        int nuevoID_Comment = obtenerUltimoIDComentario() + 1;
+
+        String queryInsertar = "INSERT INTO Comentarios (ID_Comentario, Fecha_Comentario, Contenido) VALUES (?, ?, ?)";
+
+        try (Connection con = obtenerConexion(); PreparedStatement pstInsertar = con.prepareStatement(queryInsertar)) {
+
+            pstInsertar.setInt(1, nuevoID_Comment);
+            pstInsertar.setDate(2, nuevoComentario.getFecha_Comentario());
+            pstInsertar.setString(3, nuevoComentario.getContenido());
+           
+
+            int filasInsertadas = pstInsertar.executeUpdate();
+
+            return filasInsertadas > 0; 
+
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, "Error al insertar el comentarios: " + e.getMessage());
+            return false;
+        }
+    }
+    private int obtenerUltimoIDComentario() {
+        String query = "SELECT MAX(ID_Comentario) FROM Comentarios";
+
+        try (Connection con = obtenerConexion(); Statement stmt = con.createStatement(); ResultSet rs = stmt.executeQuery(query)) {
+
+            if (rs.next()) {
+                return rs.getInt(1);  
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Error al obtener el último ID_Comentario: " + e.getMessage());
+        }
+
+        return 0;  
+    }
+   
+   
 }

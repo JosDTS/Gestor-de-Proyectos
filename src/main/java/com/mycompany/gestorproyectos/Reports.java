@@ -7,6 +7,7 @@ package com.mycompany.gestorproyectos;
 import ConexionSQL.ClassConexionSQLServer;
 import ConexionSQL.ReportsClass;
 import java.util.List;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -218,9 +219,17 @@ public class Reports extends javax.swing.JFrame {
     }//GEN-LAST:event_btnBackReportsActionPerformed
 
     private void btnAddReportsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddReportsActionPerformed
-        InformationReports informationReports = new InformationReports();
-        informationReports.setVisible(true);
-        dispose();
+       ClassConexionSQLServer conexion = new ClassConexionSQLServer();
+
+      
+        boolean exito = conexion.insertarReports();
+
+        if (exito) {
+            JOptionPane.showMessageDialog(this, "Informe agregado con éxito.");
+            cargarDatos(); 
+        } else {
+            JOptionPane.showMessageDialog(this, "Error al agregar el informe.");
+        }
     }//GEN-LAST:event_btnAddReportsActionPerformed
 
     private void btnEditReports1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditReports1ActionPerformed

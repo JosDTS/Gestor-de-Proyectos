@@ -7,6 +7,7 @@ package com.mycompany.gestorproyectos;
 import ConexionSQL.ClassConexionSQLServer;
 import ConexionSQL.CommentsClass;
 import java.util.List;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -209,9 +210,17 @@ private void cargarDatos() {
     }//GEN-LAST:event_btnBackCommentsActionPerformed
 
     private void btnAddCommentsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddCommentsActionPerformed
-          InformationComments informationComments = new InformationComments();
-        informationComments.setVisible(true);
-        dispose();
+         ClassConexionSQLServer conexion = new ClassConexionSQLServer();
+
+     
+        boolean exito = conexion.insertarComentarios();
+
+        if (exito) {
+            JOptionPane.showMessageDialog(this, "Comentario agregado con éxito.");
+            cargarDatos();  
+        } else {
+            JOptionPane.showMessageDialog(this, "Error al agregar el comentario.");
+    }
     }//GEN-LAST:event_btnAddCommentsActionPerformed
 
     private void btnEditComments1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditComments1ActionPerformed

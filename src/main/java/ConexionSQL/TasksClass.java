@@ -15,20 +15,18 @@ public class TasksClass {
     private Date Fecha_Inicio;
     private Date Fecha_Fin;
     private String Estado;
-    private float Presupuesto;
     private String Prioridad;
-    private String Departamento_Encargado;
+    
 
-    public TasksClass(int ID_Tareas, String Nombre, String Descripcion, Date Fecha_Inicio, Date Fecha_Fin, String Estado, float Presupuesto, String Prioridad, String Departamento_Encargado) {
+    public TasksClass(int ID_Tareas, String Nombre, String Descripcion, Date Fecha_Inicio, Date Fecha_Fin, String Estado, String Prioridad) {
         this.ID_Tareas = ID_Tareas;
         this.Nombre = Nombre;
         this.Descripcion = Descripcion;
         this.Fecha_Inicio = Fecha_Inicio;
         this.Fecha_Fin = Fecha_Fin;
         this.Estado = Estado;
-        this.Presupuesto = Presupuesto;
         this.Prioridad = Prioridad;
-        this.Departamento_Encargado = Departamento_Encargado;
+        
     }
 
     public TasksClass() {
@@ -82,13 +80,7 @@ public class TasksClass {
         this.Estado = Estado;
     }
 
-    public float getPresupuesto() {
-        return Presupuesto;
-    }
-
-    public void setPresupuesto(float Presupuesto) {
-        this.Presupuesto = Presupuesto;
-    }
+   
 
     public String getPrioridad() {
         return Prioridad;
@@ -98,14 +90,5 @@ public class TasksClass {
         this.Prioridad = Prioridad;
     }
 
-    public String getDepartamento_Encargado() {
-        return Departamento_Encargado;
-    }
-
-    public void setDepartamento_Encargado(String Departamento_Encargado) {
-        this.Departamento_Encargado = Departamento_Encargado;
-    }
-    
-    
             
 }

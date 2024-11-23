@@ -4,6 +4,8 @@
  */
 package ConexionSQL;
 
+import java.sql.Date;
+
 /**
  *
  * @author ESTUDIANTE

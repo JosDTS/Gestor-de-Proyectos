@@ -44,7 +44,7 @@ public class Phases extends javax.swing.JFrame {
                 p.getNombre(),
                 p.getDescripcion(),
                 p.getFechaFase(),
-                p.getEstadoFAse()
+                p.getEstadoFase()
             };
             model.addRow(rowData);
         }
@@ -221,9 +221,17 @@ public class Phases extends javax.swing.JFrame {
     }//GEN-LAST:event_btnBackPhasesActionPerformed
 
     private void btnEditPhasesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditPhasesActionPerformed
-       InformationPhases informationPhases = new InformationPhases(); 
-        informationPhases.setVisible(true);
-        dispose();
+   ClassConexionSQLServer conexion = new ClassConexionSQLServer();
+
+       
+        boolean exito = conexion.insertarFases();
+
+        if (exito) {
+            JOptionPane.showMessageDialog(this, "Fase agregada con éxito.");
+            cargarDatos(); 
+        } else {
+            JOptionPane.showMessageDialog(this, "Error al agregar la fase.");
+    }
     }//GEN-LAST:event_btnEditPhasesActionPerformed
 
     private void btnEditPhases1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditPhases1ActionPerformed

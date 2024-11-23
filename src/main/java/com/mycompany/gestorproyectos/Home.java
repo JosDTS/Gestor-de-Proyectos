@@ -5,10 +5,13 @@
 package com.mycompany.gestorproyectos;
 
 import ConexionSQL.ClassConexionSQLServer;
+import ConexionSQL.Person;
 import ConexionSQL.Proyects;
 import StyleTable.TableActionCellEditor;
 import StyleTable.TableActionCellRender;
 import StyleTable.TableActionEvent;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.sql.DatabaseMetaData;
 import java.util.List;
 import javax.swing.JOptionPane;
@@ -44,6 +47,21 @@ public class Home extends javax.swing.JFrame {
         table.getColumnModel().getColumn(8).setCellEditor(new TableActionCellEditor(event));
 
         cargarDatos();
+        
+        
+         btnUser.addActionListener(new ActionListener() {
+           @Override
+           public void actionPerformed(ActionEvent e) {
+               Person usuarioLogueado = obtenerUsuarioLogueado(); 
+
+               if (usuarioLogueado != null) {
+                   UserInformation userInfoFrame = new UserInformation(usuarioLogueado);
+                   userInfoFrame.setVisible(true); 
+               } else {
+                   JOptionPane.showMessageDialog(Home.this, "No hay un usuario logueado.");
+               }
+           }
+       });
     }
 
     /**
@@ -65,6 +83,7 @@ public class Home extends javax.swing.JFrame {
         btnEliminateProyect = new javax.swing.JButton();
         btnAddProyect1 = new javax.swing.JButton();
         btnEditProyect = new javax.swing.JButton();
+        btnUser = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         addWindowFocusListener(new java.awt.event.WindowFocusListener() {
@@ -137,12 +156,22 @@ public class Home extends javax.swing.JFrame {
         btnSearch.setFont(new java.awt.Font("Source Serif Pro", 0, 18)); // NOI18N
         btnSearch.setForeground(new java.awt.Color(255, 255, 255));
         btnSearch.setText("Buscar");
+        btnSearch.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSearchActionPerformed(evt);
+            }
+        });
 
         btnEliminateProyect.setBackground(new java.awt.Color(0, 153, 153));
         btnEliminateProyect.setFont(new java.awt.Font("Source Serif Pro", 0, 18)); // NOI18N
         btnEliminateProyect.setForeground(new java.awt.Color(255, 255, 255));
         btnEliminateProyect.setIcon(new javax.swing.ImageIcon(getClass().getResource("/tabler--trash.png"))); // NOI18N
         btnEliminateProyect.setText("Eliminar");
+        btnEliminateProyect.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEliminateProyectActionPerformed(evt);
+            }
+        });
 
         btnAddProyect1.setBackground(new java.awt.Color(0, 153, 153));
         btnAddProyect1.setFont(new java.awt.Font("Source Serif Pro", 0, 18)); // NOI18N
@@ -166,6 +195,15 @@ public class Home extends javax.swing.JFrame {
             }
         });
 
+        btnUser.setBackground(new java.awt.Color(255, 255, 255));
+        btnUser.setIcon(new javax.swing.ImageIcon(getClass().getResource("/qlementine-icons--user-16 (2).png"))); // NOI18N
+        btnUser.setBorder(null);
+        btnUser.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnUserActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -176,14 +214,6 @@ public class Home extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(btnSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(340, 340, 340)
-                .addComponent(lbProyectText, javax.swing.GroupLayout.PREFERRED_SIZE, 184, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(15, 15, 15)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 890, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(15, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(btnAddProyect1, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -192,11 +222,24 @@ public class Home extends javax.swing.JFrame {
                 .addGap(43, 43, 43)
                 .addComponent(btnEliminateProyect, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(172, 172, 172))
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(15, 15, 15)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(btnUser)
+                        .addGap(269, 269, 269)
+                        .addComponent(lbProyectText, javax.swing.GroupLayout.PREFERRED_SIZE, 184, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 890, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(15, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addComponent(lbProyectText, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(lbProyectText, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(14, 14, 14)
+                        .addComponent(btnUser)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(btnSearch, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -216,16 +259,16 @@ public class Home extends javax.swing.JFrame {
         backgroundProyectsLayout.setHorizontalGroup(
             backgroundProyectsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(backgroundProyectsLayout.createSequentialGroup()
-                .addGap(32, 32, 32)
+                .addGap(20, 20, 20)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(14, Short.MAX_VALUE))
+                .addContainerGap(26, Short.MAX_VALUE))
         );
         backgroundProyectsLayout.setVerticalGroup(
             backgroundProyectsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(backgroundProyectsLayout.createSequentialGroup()
-                .addGap(16, 16, 16)
+                .addGap(15, 15, 15)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 526, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(22, Short.MAX_VALUE))
+                .addContainerGap(23, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -243,6 +286,23 @@ public class Home extends javax.swing.JFrame {
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
+    
+   private Person obtenerUsuarioLogueado() {
+    ClassConexionSQLServer conexion = new ClassConexionSQLServer();
+    String email = "g"; 
+    String contraseña = "g"; 
+
+    if (conexion.VerifyLogin(email, contraseña)) {
+       
+        return conexion.obtenerDatosUsuario(email); 
+    }
+    
+    return null; 
+}
+    
+    /**
+     * Metodo para recargar la tabla 
+     */
     public void cargarDatos() {
         ClassConexionSQLServer conexion = new ClassConexionSQLServer();
         List<Proyects> proyectosList = conexion.obtenerProyectos();
@@ -265,6 +325,61 @@ public class Home extends javax.swing.JFrame {
             model.addRow(rowData);
         }
     }
+    
+    
+    /**
+     * Metodo para buscar los proyectos por el nombre del proyecto
+     */
+    private void buscarProyecto() {
+    String nombreBuscado = txtSearch.getText().trim(); 
+
+    ClassConexionSQLServer conexion = new ClassConexionSQLServer();
+    List<Proyects> proyectosList = conexion.buscarProyectosPorNombre(nombreBuscado);
+
+    DefaultTableModel model = (DefaultTableModel) table.getModel();
+    model.setRowCount(0); 
+    for (Proyects p : proyectosList) {
+        Object[] rowData = {
+            p.getIdProyecto(),
+            p.getNombre(),
+            p.getFechaInicio(),
+            p.getFechaFin(),
+            p.getEstado(),
+            p.getPresupuesto(),
+            p.getDescripcion(),
+            p.getDepartamentoEncargado(),
+            "Más Información" 
+        };
+        model.addRow(rowData); 
+    }
+}
+   /**
+    * Metodo para sleccionar un proyecto y eliminarlo
+    */
+    
+    private void eliminarProyecto() {
+    int selectedRow = table.getSelectedRow(); 
+
+    if (selectedRow >= 0) { 
+        int idProyecto = (int) table.getValueAt(selectedRow, 0); 
+
+        int confirm = JOptionPane.showConfirmDialog(this, "¿Estás seguro de que deseas eliminar este proyecto?", "Confirmar eliminación", JOptionPane.YES_NO_OPTION);
+        
+        if (confirm == JOptionPane.YES_OPTION) {
+            ClassConexionSQLServer conexion = new ClassConexionSQLServer();
+            boolean exito = conexion.eliminarProyecto(idProyecto); 
+
+            if (exito) {
+                JOptionPane.showMessageDialog(this, "Proyecto eliminado con éxito.");
+                cargarDatos();
+            } else {
+                JOptionPane.showMessageDialog(this, "Error al eliminar el proyecto.");
+            }
+        }
+    } else {
+        JOptionPane.showMessageDialog(this, "Por favor selecciona un proyecto para eliminar.");
+    }
+}
 
 
     private void txtSearchFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtSearchFocusGained
@@ -302,30 +417,46 @@ public class Home extends javax.swing.JFrame {
     }//GEN-LAST:event_btnAddProyect1ActionPerformed
 
     private void btnEditProyectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditProyectActionPerformed
-          int selectedRow = table.getSelectedRow(); 
+  int selectedRow = table.getSelectedRow(); 
 
     if (selectedRow >= 0) { 
-		int idProyecto = (int) table.getValueAt(selectedRow, 0); 
+        int idProyecto = (int) table.getValueAt(selectedRow, 0); 
 
-		ClassConexionSQLServer conexion = new ClassConexionSQLServer();
-		
-		
-		Proyects proyectoSeleccionado = conexion.obtenerProyectoPorId(idProyecto); 
+        ClassConexionSQLServer conexion = new ClassConexionSQLServer();
+        
+       
+        Proyects proyectoSeleccionado = conexion.obtenerProyectoPorId(idProyecto); 
 
-		if (proyectoSeleccionado != null) { 
-			InformationProyect informationFrame = new InformationProyect(); 
-			informationFrame.loadData(proyectoSeleccionado);
-			informationFrame.setVisible(true); 
-                       
-                        
-			
-		} else {
-			JOptionPane.showMessageDialog(this,"Error al obtener los datos del proyecto.");
-		}
+        if (proyectoSeleccionado != null) { 
+            InformationProyect informationFrame = new InformationProyect(); 
+            informationFrame.loadData(proyectoSeleccionado); 
+            
+            informationFrame.setVisible(true); 
+            
+            informationFrame.addWindowListener(new java.awt.event.WindowAdapter() {
+                public void windowClosed(java.awt.event.WindowEvent windowEvent) {
+                    cargarDatos(); 
+                }
+            });
+        } else {
+            JOptionPane.showMessageDialog(this,"Error al obtener los datos del proyecto.");
+        }
     } else {
-		JOptionPane.showMessageDialog(this,"Por favor selecciona un proyecto para editar.");
-	}
+        JOptionPane.showMessageDialog(this,"Por favor selecciona un proyecto para editar.");
+    }
     }//GEN-LAST:event_btnEditProyectActionPerformed
+
+    private void btnSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSearchActionPerformed
+      buscarProyecto();
+    }//GEN-LAST:event_btnSearchActionPerformed
+
+    private void btnEliminateProyectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminateProyectActionPerformed
+        eliminarProyecto();
+    }//GEN-LAST:event_btnEliminateProyectActionPerformed
+
+    private void btnUserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUserActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnUserActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -334,6 +465,7 @@ public class Home extends javax.swing.JFrame {
     private javax.swing.JButton btnEditProyect;
     private javax.swing.JButton btnEliminateProyect;
     private javax.swing.JButton btnSearch;
+    private javax.swing.JButton btnUser;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel lbProyectText;
